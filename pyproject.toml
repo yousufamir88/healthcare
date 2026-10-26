@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "healthcare"
+version = "0.1.0"
+description = "Practo Healthcare domain support agent. Graded demonstrations run in MOCK_LLM mode with no API keys."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "autogen-agentchat>=0.7.5",
+    "chromadb>=1.5.9",
+    "crewai>=1.15.27",
+    "fastapi>=0.143.0",
+    "langchain>=1.4.5",
+    "pydantic>=2.12.5",
+    "requests>=2.34.2",
+    "sentence-transformers>=6.1.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]
+
+[project.scripts]
+practo-config = "app.config:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
+exclude = ["tests*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+markers = [
+    "integration: loads SentenceTransformers and a persistent ChromaDB index",
+]

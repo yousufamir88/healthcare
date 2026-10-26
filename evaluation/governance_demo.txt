@@ -1,0 +1,33 @@
+Governance demonstration
+Mode: MOCK_LLM
+Budget rate: local estimate, not a vendor price
+Token budget: 256
+Cost budget INR: 0.0512
+INR per 1000 tokens: 0.2
+
+Least autonomy
+Retrieval Agent: ['search_policies']
+Lookup Agent: ['check_appointment_status']
+Response Composer: []
+
+Risk labels
+Policy question: low
+Appointment question: medium
+Injection question: high
+Dose question: high
+
+Budget
+Short question tokens: 9, cost INR: 0.0018, allowed: True
+Oversized question tokens: 700, cost INR: 0.14, allowed: False
+Oversized answer: This request is larger than the local token budget, so it was not sent to the support crew.
+Tools called for the oversized question: none
+
+Cache
+First answer contains four hours: True
+Second answer matches the first: True
+Cache entries: 1
+Log outcomes: answered, cache_hit, rejected_budget, rejected_injection
+Tools called on the repeated question: none
+Stored messages after two asks: 4
+Injection still blocked: True
+Injection reused the cached booking answer: False

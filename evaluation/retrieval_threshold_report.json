@@ -1,0 +1,112 @@
+{
+  "embedding_model": "all-MiniLM-L6-v2",
+  "collection_counts": {
+    "fixed_size_overlap": 77,
+    "sentence": 48
+  },
+  "cosine_distance_probe": {
+    "identical": 0.0,
+    "orthogonal": 1.0,
+    "opposite": 2.0
+  },
+  "recommended_strategy": "sentence",
+  "threshold": {
+    "threshold": 0.33664840576753746,
+    "rule": "midpoint",
+    "lowest_in_scope": 0.5575079953548916,
+    "highest_out_of_scope": 0.11578881618018336,
+    "reason": "Every measured in-scope top-1 similarity is above every measured out-of-scope top-1 similarity. The threshold is the midpoint between the lowest in-scope score (0.557508) and the highest out-of-scope score (0.115789)."
+  },
+  "measurements": [
+    {
+      "query": "How do I book a clinic appointment?",
+      "in_scope": true,
+      "strategy": "sentence",
+      "top_similarity": 0.8103168350082683,
+      "top_distance": 0.18968337774276733,
+      "doc_id": "appointment-booking",
+      "source": "appointment-booking.md",
+      "chunk_id": "appointment-booking:sentence:0"
+    },
+    {
+      "query": "What is the cancellation and rescheduling policy?",
+      "in_scope": true,
+      "strategy": "sentence",
+      "top_similarity": 0.5575079953548916,
+      "top_distance": 0.44249188899993896,
+      "doc_id": "cancellation-rescheduling",
+      "source": "cancellation-rescheduling.md",
+      "chunk_id": "cancellation-rescheduling:sentence:0"
+    },
+    {
+      "query": "What are the consultation fees by specialty?",
+      "in_scope": true,
+      "strategy": "sentence",
+      "top_similarity": 0.6838799540627373,
+      "top_distance": 0.3161202073097229,
+      "doc_id": "follow-up-discount",
+      "source": "follow-up-discount.md",
+      "chunk_id": "follow-up-discount:sentence:0"
+    },
+    {
+      "query": "How does the insurance claim process work?",
+      "in_scope": true,
+      "strategy": "sentence",
+      "top_similarity": 0.6436587100032635,
+      "top_distance": 0.3563411235809326,
+      "doc_id": "insurance-claims",
+      "source": "insurance-claims.md",
+      "chunk_id": "insurance-claims:sentence:0"
+    },
+    {
+      "query": "What is the follow-up discount?",
+      "in_scope": true,
+      "strategy": "sentence",
+      "top_similarity": 0.5620608318174249,
+      "top_distance": 0.4379388689994812,
+      "doc_id": "follow-up-discount",
+      "source": "follow-up-discount.md",
+      "chunk_id": "follow-up-discount:sentence:0"
+    },
+    {
+      "query": "Who is eligible for a telemedicine video visit?",
+      "in_scope": true,
+      "strategy": "sentence",
+      "top_similarity": 0.7273106613497288,
+      "top_distance": 0.2726896405220032,
+      "doc_id": "telemedicine",
+      "source": "telemedicine.md",
+      "chunk_id": "telemedicine:sentence:0"
+    },
+    {
+      "query": "What is the cardiology consultation fee and can a first cardiology visit be done by video?",
+      "in_scope": true,
+      "strategy": "sentence",
+      "top_similarity": 0.7309183737023219,
+      "top_distance": 0.26908183097839355,
+      "doc_id": "follow-up-discount",
+      "source": "follow-up-discount.md",
+      "chunk_id": "follow-up-discount:sentence:3"
+    },
+    {
+      "query": "Who will win the next cricket world cup?",
+      "in_scope": false,
+      "strategy": "sentence",
+      "top_similarity": 0.11578881618018336,
+      "top_distance": 0.8842111229896545,
+      "doc_id": "insurance-claims",
+      "source": "insurance-claims.md",
+      "chunk_id": "insurance-claims:sentence:1"
+    },
+    {
+      "query": "What is the capital of France?",
+      "in_scope": false,
+      "strategy": "sentence",
+      "top_similarity": 0.06163808065053502,
+      "top_distance": 0.9383618831634521,
+      "doc_id": "consultation-fees",
+      "source": "consultation-fees.md",
+      "chunk_id": "consultation-fees:sentence:2"
+    }
+  ]
+}

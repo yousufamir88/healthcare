@@ -1,0 +1,60 @@
+Practo Domain Support Agent RAG demonstration
+Mode: MOCK_LLM
+Policies: fictional clinic policies, not official Practo policy and not real patient records.
+Retrieval strategy: sentence
+Calibrated similarity threshold: 0.336648
+Threshold rule: Every measured in-scope top-1 similarity is above every measured out-of-scope top-1 similarity. The threshold is the midpoint between the lowest in-scope score (0.557508) and the highest out-of-scope score (0.115789).
+
+Query: How do I book a clinic appointment?
+Retrieval strategy: sentence
+Retrieved chunks:
+- appointment-booking (appointment-booking.md) chunk_id=appointment-booking:sentence:0 similarity=0.810317 distance=0.189683
+- emergency-protocol (emergency-protocol.md) chunk_id=emergency-protocol:sentence:3 similarity=0.738714 distance=0.261286
+- telemedicine (telemedicine.md) chunk_id=telemedicine:sentence:2 similarity=0.572507 distance=0.427493
+Final answer: A patient books a clinic appointment by selecting a specialty, a clinician, and an open slot at least four hours before the visit starts. After emergency treatment elsewhere, a routine clinic visit can be booked through the normal appointment process. A video appointment uses the same cancellation window as an in-person clinic appointment.
+Fallback triggered: false
+
+Query: What is the cancellation and rescheduling policy?
+Retrieval strategy: sentence
+Retrieved chunks:
+- cancellation-rescheduling (cancellation-rescheduling.md) chunk_id=cancellation-rescheduling:sentence:0 similarity=0.557508 distance=0.442492
+- cancellation-rescheduling (cancellation-rescheduling.md) chunk_id=cancellation-rescheduling:sentence:1 similarity=0.546741 distance=0.453258
+- cancellation-rescheduling (cancellation-rescheduling.md) chunk_id=cancellation-rescheduling:sentence:2 similarity=0.507235 distance=0.492765
+Final answer: A booked appointment may be cancelled or rescheduled until six hours before the scheduled start time. A cancellation made inside that window is stored with status Cancelled, and the consultation fee is not collected. Rescheduling keeps the original record id and sets the status to Rescheduled without opening a second record.
+Fallback triggered: false
+
+Query: What are the consultation fees by specialty?
+Retrieval strategy: sentence
+Retrieved chunks:
+- follow-up-discount (follow-up-discount.md) chunk_id=follow-up-discount:sentence:0 similarity=0.683880 distance=0.316120
+- consultation-fees (consultation-fees.md) chunk_id=consultation-fees:sentence:0 similarity=0.630248 distance=0.369751
+- appointment-booking (appointment-booking.md) chunk_id=appointment-booking:sentence:2 similarity=0.585799 distance=0.414201
+Final answer: A follow-up visit booked within fourteen days of a completed appointment in the same specialty receives a twenty percent discount on the consultation fee. Published consultation list fees in this synthetic clinic are 600 INR for General Medicine, 750 INR for Pediatrics, 900 INR for Dermatology, 1300 INR for Orthopedics, and 1800 INR for Cardiology. The confirmation message includes the appointment record id, the specialty, and the quoted consultation fee in INR.
+Fallback triggered: false
+
+Query: How does the insurance claim process work?
+Retrieval strategy: sentence
+Retrieved chunks:
+- insurance-claims (insurance-claims.md) chunk_id=insurance-claims:sentence:0 similarity=0.643659 distance=0.356341
+- insurance-claims (insurance-claims.md) chunk_id=insurance-claims:sentence:1 similarity=0.482293 distance=0.517707
+- prescription-refills (prescription-refills.md) chunk_id=prescription-refills:sentence:1 similarity=0.304089 distance=0.695911
+Final answer: A patient may submit an insurance claim within fifteen days of a completed visit by providing the invoice and the appointment record id. The clinic prepares a claim-support note and does not guarantee that the insurer will approve payment.
+Fallback triggered: false
+
+Query: What is the follow-up discount?
+Retrieval strategy: sentence
+Retrieved chunks:
+- follow-up-discount (follow-up-discount.md) chunk_id=follow-up-discount:sentence:0 similarity=0.562061 distance=0.437939
+- follow-up-discount (follow-up-discount.md) chunk_id=follow-up-discount:sentence:1 similarity=0.546909 distance=0.453090
+- follow-up-discount (follow-up-discount.md) chunk_id=follow-up-discount:sentence:3 similarity=0.492141 distance=0.507859
+Final answer: A follow-up visit booked within fourteen days of a completed appointment in the same specialty receives a twenty percent discount on the consultation fee. The new appointment must be marked follow-up required for that discount to apply at billing. Cardiology follow-up visits use the same twenty percent discount on the cardiology consultation fee.
+Fallback triggered: false
+
+Query: Who will win the next cricket world cup?
+Retrieval strategy: sentence
+Retrieved chunks:
+- insurance-claims (insurance-claims.md) chunk_id=insurance-claims:sentence:1 similarity=0.115789 distance=0.884211
+- insurance-claims (insurance-claims.md) chunk_id=insurance-claims:sentence:0 similarity=0.106823 distance=0.893178
+- prescription-refills (prescription-refills.md) chunk_id=prescription-refills:sentence:0 similarity=0.073085 distance=0.926915
+Final answer: I don't have enough verified information in the available support knowledge base to answer that question.
+Fallback triggered: true

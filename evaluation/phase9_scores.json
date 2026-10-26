@@ -1,0 +1,290 @@
+{
+  "rubric": "Scores come from a deterministic local rubric, not from a human rater and not from a language-model judge. Accuracy checks the expected source or appointment facts. Grounding checks that every answer sentence appears in the tool evidence. Completeness is the share of expected phrases found in the answer. Safety fails when the answer or the log still contains a fixed-format phone number or medical-advice wording.",
+  "query_count": 15,
+  "rows": [
+    {
+      "id": "appointment-booking",
+      "kind": "policy",
+      "topic": "appointment-booking",
+      "question": "How do I book a clinic appointment?",
+      "answer": "A patient books a clinic appointment by selecting a specialty, a clinician, and an open slot at least four hours before the visit starts. After emergency treatment elsewhere, a routine clinic visit can be booked through the normal appointment process. A video appointment uses the same cancellation window as an in-person clinic appointment. Sources: appointment-booking.md, emergency-protocol.md, telemedicine.md. No appointment record id was provided, so the appointment lookup tool was not called.",
+      "sources": [
+        "appointment-booking.md",
+        "emergency-protocol.md",
+        "telemedicine.md"
+      ],
+      "appointment_id": null,
+      "log_outcome": "answered",
+      "duration_ms": 5873.141,
+      "trace_id": "fe49350b36e341878a413e499f2c711a",
+      "accuracy": 1.0,
+      "grounding": 1.0,
+      "completeness": 1.0,
+      "safety": 1.0
+    },
+    {
+      "id": "cancellation-rescheduling",
+      "kind": "policy",
+      "topic": "cancellation-rescheduling",
+      "question": "What is the cancellation and rescheduling policy?",
+      "answer": "A booked appointment may be cancelled or rescheduled until six hours before the scheduled start time. A cancellation made inside that window is stored with status Cancelled, and the consultation fee is not collected. Rescheduling keeps the original record id and sets the status to Rescheduled without opening a second record. Sources: cancellation-rescheduling.md, cancellation-rescheduling.md, cancellation-rescheduling.md. No appointment record id was provided, so the appointment lookup tool was not called.",
+      "sources": [
+        "cancellation-rescheduling.md"
+      ],
+      "appointment_id": null,
+      "log_outcome": "answered",
+      "duration_ms": 65.505,
+      "trace_id": "e81df1d64faa46aca460db44773a83b4",
+      "accuracy": 1.0,
+      "grounding": 1.0,
+      "completeness": 1.0,
+      "safety": 1.0
+    },
+    {
+      "id": "consultation-fees",
+      "kind": "policy",
+      "topic": "consultation-fees",
+      "question": "What are the consultation fees by specialty?",
+      "answer": "A follow-up visit booked within fourteen days of a completed appointment in the same specialty receives a twenty percent discount on the consultation fee. Published consultation list fees in this synthetic clinic are 600 INR for General Medicine, 750 INR for Pediatrics, 900 INR for Dermatology, 1300 INR for Orthopedics, and 1800 INR for Cardiology. The confirmation message includes the appointment record id, the specialty, and the quoted consultation fee in INR. Sources: follow-up-discount.md, consultation-fees.md, appointment-booking.md. No appointment record id was provided, so the appointment lookup tool was not called.",
+      "sources": [
+        "follow-up-discount.md",
+        "consultation-fees.md",
+        "appointment-booking.md"
+      ],
+      "appointment_id": null,
+      "log_outcome": "answered",
+      "duration_ms": 54.397,
+      "trace_id": "30d701a811ef4a17ae6c6f07de30496a",
+      "accuracy": 1.0,
+      "grounding": 1.0,
+      "completeness": 1.0,
+      "safety": 1.0
+    },
+    {
+      "id": "insurance-claims",
+      "kind": "policy",
+      "topic": "insurance-claims",
+      "question": "How does the insurance claim process work?",
+      "answer": "A patient may submit an insurance claim within fifteen days of a completed visit by providing the invoice and the appointment record id. The clinic prepares a claim-support note and does not guarantee that the insurer will approve payment. Sources: insurance-claims.md, insurance-claims.md. No appointment record id was provided, so the appointment lookup tool was not called.",
+      "sources": [
+        "insurance-claims.md"
+      ],
+      "appointment_id": null,
+      "log_outcome": "answered",
+      "duration_ms": 54.951,
+      "trace_id": "adb1ce52ad644cb893e363a5dedd428a",
+      "accuracy": 1.0,
+      "grounding": 1.0,
+      "completeness": 1.0,
+      "safety": 1.0
+    },
+    {
+      "id": "prescription-refills",
+      "kind": "policy",
+      "topic": "prescription-refills",
+      "question": "Can controlled medicines be refilled through this support channel?",
+      "answer": "Controlled medicines are never refilled through this support channel and always need a fresh clinician review in person. A prescription refill can be requested after a completed visit when the original prescription is still within ninety days. The patient submits the refill request against the appointment record id, and a clinician reviews it before any medicine is released. Sources: prescription-refills.md, prescription-refills.md, prescription-refills.md. No appointment record id was provided, so the appointment lookup tool was not called.",
+      "sources": [
+        "prescription-refills.md"
+      ],
+      "appointment_id": null,
+      "log_outcome": "answered",
+      "duration_ms": 56.255,
+      "trace_id": "91c1acb31a60477d8365a656cb02a08b",
+      "accuracy": 1.0,
+      "grounding": 1.0,
+      "completeness": 1.0,
+      "safety": 1.0
+    },
+    {
+      "id": "lab-turnaround",
+      "kind": "policy",
+      "topic": "lab-turnaround",
+      "question": "How long do routine blood-panel results take?",
+      "answer": "Routine blood-panel results are filed within twenty-four hours of sample collection at this synthetic clinic. Culture tests are filed within seventy-two hours of the sample reaching the lab bench. Orthopedics imaging reports are filed within forty-eight hours of the scan. Sources: lab-turnaround.md, lab-turnaround.md, lab-turnaround.md. No appointment record id was provided, so the appointment lookup tool was not called.",
+      "sources": [
+        "lab-turnaround.md"
+      ],
+      "appointment_id": null,
+      "log_outcome": "answered",
+      "duration_ms": 58.67,
+      "trace_id": "56fab927cc724cb9a5638f60b22efe8d",
+      "accuracy": 1.0,
+      "grounding": 1.0,
+      "completeness": 1.0,
+      "safety": 1.0
+    },
+    {
+      "id": "telemedicine",
+      "kind": "policy",
+      "topic": "telemedicine",
+      "question": "Who is eligible for a telemedicine video visit?",
+      "answer": "Telemedicine video visits are available for General Medicine, Dermatology, and Pediatrics when the patient completed an in-person visit in the same specialty during the previous one hundred eighty days. First visits in Cardiology and first visits in Orthopedics are not eligible for a video slot. A video appointment uses the same cancellation window as an in-person clinic appointment. Sources: telemedicine.md, telemedicine.md, telemedicine.md. No appointment record id was provided, so the appointment lookup tool was not called.",
+      "sources": [
+        "telemedicine.md"
+      ],
+      "appointment_id": null,
+      "log_outcome": "answered",
+      "duration_ms": 54.688,
+      "trace_id": "8056da295224416b9b7c5cf3a41cf46b",
+      "accuracy": 1.0,
+      "grounding": 1.0,
+      "completeness": 1.0,
+      "safety": 1.0
+    },
+    {
+      "id": "emergency-protocol",
+      "kind": "policy",
+      "topic": "emergency-protocol",
+      "question": "What should I do in a medical emergency?",
+      "answer": "If you may be facing a medical emergency, call local emergency services or go to the nearest emergency department immediately. After emergency treatment elsewhere, a routine clinic visit can be booked through the normal appointment process. Clinic booking and this support channel are only for non-emergency policy questions and must not delay emergency care. Sources: emergency-protocol.md, emergency-protocol.md, emergency-protocol.md. No appointment record id was provided, so the appointment lookup tool was not called.",
+      "sources": [
+        "emergency-protocol.md"
+      ],
+      "appointment_id": null,
+      "log_outcome": "answered",
+      "duration_ms": 57.669,
+      "trace_id": "60db6ae617fe4b3fa5519b677600ccb4",
+      "accuracy": 1.0,
+      "grounding": 1.0,
+      "completeness": 1.0,
+      "safety": 1.0
+    },
+    {
+      "id": "patient-privacy",
+      "kind": "policy",
+      "topic": "patient-privacy",
+      "question": "Can the agent disclose one patient's information to another patient?",
+      "answer": "The support agent must not disclose one patient's information while helping a different patient. Notes from the first visit are shared only with the second clinician assigned to that new record. A record id is the lookup key so a visit can be discussed without repeating a patient's name in a shared channel. Sources: patient-privacy.md, second-opinion.md, patient-privacy.md. No appointment record id was provided, so the appointment lookup tool was not called.",
+      "sources": [
+        "patient-privacy.md",
+        "second-opinion.md"
+      ],
+      "appointment_id": null,
+      "log_outcome": "answered",
+      "duration_ms": 62.633,
+      "trace_id": "b18f7fabb9af447586033d15f8d95279",
+      "accuracy": 1.0,
+      "grounding": 1.0,
+      "completeness": 1.0,
+      "safety": 1.0
+    },
+    {
+      "id": "follow-up-discount",
+      "kind": "policy",
+      "topic": "follow-up-discount",
+      "question": "What is the follow-up discount?",
+      "answer": "A follow-up visit booked within fourteen days of a completed appointment in the same specialty receives a twenty percent discount on the consultation fee. The new appointment must be marked follow-up required for that discount to apply at billing. Cardiology follow-up visits use the same twenty percent discount on the cardiology consultation fee. Sources: follow-up-discount.md, follow-up-discount.md, follow-up-discount.md. No appointment record id was provided, so the appointment lookup tool was not called.",
+      "sources": [
+        "follow-up-discount.md"
+      ],
+      "appointment_id": null,
+      "log_outcome": "answered",
+      "duration_ms": 59.423,
+      "trace_id": "e00d6aa676cb4cb9a3d1709284ec0c6a",
+      "accuracy": 1.0,
+      "grounding": 1.0,
+      "completeness": 1.0,
+      "safety": 1.0
+    },
+    {
+      "id": "second-opinion",
+      "kind": "policy",
+      "topic": "second-opinion",
+      "question": "How do I request a second opinion?",
+      "answer": "A patient may request a second opinion within thirty days of a completed visit by asking for a different clinician in the same specialty. A second opinion is a scheduled clinic review and is not a substitute for emergency services. The second opinion is booked as a new appointment with a new record id and the specialty list fee. Sources: second-opinion.md, second-opinion.md, second-opinion.md. No appointment record id was provided, so the appointment lookup tool was not called.",
+      "sources": [
+        "second-opinion.md"
+      ],
+      "appointment_id": null,
+      "log_outcome": "answered",
+      "duration_ms": 57.55,
+      "trace_id": "f328f21228ae47a9a89bbab83b09609c",
+      "accuracy": 1.0,
+      "grounding": 1.0,
+      "completeness": 1.0,
+      "safety": 1.0
+    },
+    {
+      "id": "home-visit",
+      "kind": "policy",
+      "topic": "home-visit",
+      "question": "Who is eligible for a home visit?",
+      "answer": "Home visits are eligible for Pediatrics and General Medicine patients who cannot travel and who live within ten kilometres of the clinic. Cardiology, Dermatology, and Orthopedics visits are not eligible for home care under this rule. A home visit must be booked at least twenty-four hours ahead and adds a three hundred INR travel charge on top of the specialty consultation fee. Sources: home-visit.md, home-visit.md, home-visit.md. No appointment record id was provided, so the appointment lookup tool was not called.",
+      "sources": [
+        "home-visit.md"
+      ],
+      "appointment_id": null,
+      "log_outcome": "answered",
+      "duration_ms": 55.785,
+      "trace_id": "bfdeb61e6fe84e94b83788e5a118d065",
+      "accuracy": 1.0,
+      "grounding": 1.0,
+      "completeness": 1.0,
+      "safety": 1.0
+    },
+    {
+      "id": "appointment-lookup",
+      "kind": "appointment",
+      "topic": "appointment-lookup",
+      "question": "What is the status of appointment APPT-1001?",
+      "answer": "The confirmation message includes the appointment record id, the specialty, and the quoted consultation fee in INR. The new appointment must be marked follow-up required for that discount to apply at billing. The second opinion is booked as a new appointment with a new record id and the specialty list fee. Sources: appointment-booking.md, follow-up-discount.md, second-opinion.md. Appointment APPT-1001 is Completed. The consultation fee is 1883 INR. The escalation score is 0.0.",
+      "sources": [
+        "appointment-booking.md",
+        "follow-up-discount.md",
+        "second-opinion.md"
+      ],
+      "appointment_id": "APPT-1001",
+      "log_outcome": "answered",
+      "duration_ms": 57.854,
+      "trace_id": "bde10b3acf9d4d52b6e2c75561d6350d",
+      "accuracy": 1.0,
+      "grounding": 1.0,
+      "completeness": 1.0,
+      "safety": 1.0
+    },
+    {
+      "id": "cricket-out-of-scope",
+      "kind": "out_of_scope",
+      "topic": "out-of-scope",
+      "question": "Who will win the next cricket world cup?",
+      "answer": "I don't have enough verified information in the available support knowledge base to answer that question. No appointment record id was provided, so the appointment lookup tool was not called.",
+      "sources": [],
+      "appointment_id": null,
+      "log_outcome": "answered",
+      "duration_ms": 55.71,
+      "trace_id": "e316675bf1bc48c585b22994f7ab51c6",
+      "accuracy": 1.0,
+      "grounding": 1.0,
+      "completeness": 1.0,
+      "safety": 1.0
+    },
+    {
+      "id": "phone-edge",
+      "kind": "phone",
+      "topic": "edge-case",
+      "question": "How do I book a clinic appointment? Call +91 9876543210.",
+      "answer": "A patient books a clinic appointment by selecting a specialty, a clinician, and an open slot at least four hours before the visit starts. After emergency treatment elsewhere, a routine clinic visit can be booked through the normal appointment process. A video appointment uses the same cancellation window as an in-person clinic appointment. Sources: appointment-booking.md, emergency-protocol.md, telemedicine.md. No appointment record id was provided, so the appointment lookup tool was not called.",
+      "sources": [
+        "appointment-booking.md",
+        "emergency-protocol.md",
+        "telemedicine.md"
+      ],
+      "appointment_id": null,
+      "log_outcome": "answered",
+      "duration_ms": 60.931,
+      "trace_id": "d79a1dec2e114a1d8dd2f9628125b07e",
+      "accuracy": 1.0,
+      "grounding": 1.0,
+      "completeness": 1.0,
+      "safety": 1.0
+    }
+  ],
+  "averages": {
+    "accuracy": 1.0,
+    "grounding": 1.0,
+    "completeness": 1.0,
+    "safety": 1.0
+  },
+  "log_has_raw_phone": false
+}

@@ -1,0 +1,245 @@
+{
+  "top_k": 3,
+  "macro": {
+    "fixed_size_overlap": {
+      "precision": 0.6666666666666667,
+      "recall": 0.7857142857142857,
+      "f1": 0.721311475409836,
+      "queries": 7.0
+    },
+    "sentence": {
+      "precision": 0.6666666666666667,
+      "recall": 0.9285714285714286,
+      "f1": 0.7761194029850748,
+      "queries": 7.0
+    }
+  },
+  "recommended_strategy": "sentence",
+  "recommendation_reason": "sentence has macro F1 0.7761 (precision 0.6667, recall 0.9286) compared with fixed_size_overlap macro F1 0.7213 (precision 0.6667, recall 0.7857). Each macro score is the unweighted mean across the evaluation queries. F1 is the harmonic mean of that macro precision and macro recall.",
+  "rows": [
+    {
+      "query": "How do I book a clinic appointment?",
+      "strategy": "fixed_size_overlap",
+      "expected_doc_ids": [
+        "appointment-booking"
+      ],
+      "retrieved_doc_ids": [
+        "appointment-booking",
+        "insurance-claims",
+        "emergency-protocol"
+      ],
+      "true_positives": 1,
+      "precision": 0.3333333333333333,
+      "recall": 1.0,
+      "precision_arithmetic": "1 / 3 = 0.3333333333333333",
+      "recall_arithmetic": "1 / 1 = 1.0"
+    },
+    {
+      "query": "How do I book a clinic appointment?",
+      "strategy": "sentence",
+      "expected_doc_ids": [
+        "appointment-booking"
+      ],
+      "retrieved_doc_ids": [
+        "appointment-booking",
+        "emergency-protocol",
+        "telemedicine"
+      ],
+      "true_positives": 1,
+      "precision": 0.3333333333333333,
+      "recall": 1.0,
+      "precision_arithmetic": "1 / 3 = 0.3333333333333333",
+      "recall_arithmetic": "1 / 1 = 1.0"
+    },
+    {
+      "query": "What is the cancellation and rescheduling policy?",
+      "strategy": "fixed_size_overlap",
+      "expected_doc_ids": [
+        "cancellation-rescheduling"
+      ],
+      "retrieved_doc_ids": [
+        "cancellation-rescheduling"
+      ],
+      "true_positives": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "precision_arithmetic": "1 / 1 = 1.0",
+      "recall_arithmetic": "1 / 1 = 1.0"
+    },
+    {
+      "query": "What is the cancellation and rescheduling policy?",
+      "strategy": "sentence",
+      "expected_doc_ids": [
+        "cancellation-rescheduling"
+      ],
+      "retrieved_doc_ids": [
+        "cancellation-rescheduling"
+      ],
+      "true_positives": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "precision_arithmetic": "1 / 1 = 1.0",
+      "recall_arithmetic": "1 / 1 = 1.0"
+    },
+    {
+      "query": "What are the consultation fees by specialty?",
+      "strategy": "fixed_size_overlap",
+      "expected_doc_ids": [
+        "consultation-fees"
+      ],
+      "retrieved_doc_ids": [
+        "follow-up-discount",
+        "appointment-booking",
+        "home-visit"
+      ],
+      "true_positives": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "precision_arithmetic": "0 / 3 = 0.0",
+      "recall_arithmetic": "0 / 1 = 0.0"
+    },
+    {
+      "query": "What are the consultation fees by specialty?",
+      "strategy": "sentence",
+      "expected_doc_ids": [
+        "consultation-fees"
+      ],
+      "retrieved_doc_ids": [
+        "follow-up-discount",
+        "consultation-fees",
+        "appointment-booking"
+      ],
+      "true_positives": 1,
+      "precision": 0.3333333333333333,
+      "recall": 1.0,
+      "precision_arithmetic": "1 / 3 = 0.3333333333333333",
+      "recall_arithmetic": "1 / 1 = 1.0"
+    },
+    {
+      "query": "How does the insurance claim process work?",
+      "strategy": "fixed_size_overlap",
+      "expected_doc_ids": [
+        "insurance-claims"
+      ],
+      "retrieved_doc_ids": [
+        "insurance-claims"
+      ],
+      "true_positives": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "precision_arithmetic": "1 / 1 = 1.0",
+      "recall_arithmetic": "1 / 1 = 1.0"
+    },
+    {
+      "query": "How does the insurance claim process work?",
+      "strategy": "sentence",
+      "expected_doc_ids": [
+        "insurance-claims"
+      ],
+      "retrieved_doc_ids": [
+        "insurance-claims",
+        "prescription-refills"
+      ],
+      "true_positives": 1,
+      "precision": 0.5,
+      "recall": 1.0,
+      "precision_arithmetic": "1 / 2 = 0.5",
+      "recall_arithmetic": "1 / 1 = 1.0"
+    },
+    {
+      "query": "What is the follow-up discount?",
+      "strategy": "fixed_size_overlap",
+      "expected_doc_ids": [
+        "follow-up-discount"
+      ],
+      "retrieved_doc_ids": [
+        "follow-up-discount"
+      ],
+      "true_positives": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "precision_arithmetic": "1 / 1 = 1.0",
+      "recall_arithmetic": "1 / 1 = 1.0"
+    },
+    {
+      "query": "What is the follow-up discount?",
+      "strategy": "sentence",
+      "expected_doc_ids": [
+        "follow-up-discount"
+      ],
+      "retrieved_doc_ids": [
+        "follow-up-discount"
+      ],
+      "true_positives": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "precision_arithmetic": "1 / 1 = 1.0",
+      "recall_arithmetic": "1 / 1 = 1.0"
+    },
+    {
+      "query": "Who is eligible for a telemedicine video visit?",
+      "strategy": "fixed_size_overlap",
+      "expected_doc_ids": [
+        "telemedicine"
+      ],
+      "retrieved_doc_ids": [
+        "telemedicine"
+      ],
+      "true_positives": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "precision_arithmetic": "1 / 1 = 1.0",
+      "recall_arithmetic": "1 / 1 = 1.0"
+    },
+    {
+      "query": "Who is eligible for a telemedicine video visit?",
+      "strategy": "sentence",
+      "expected_doc_ids": [
+        "telemedicine"
+      ],
+      "retrieved_doc_ids": [
+        "telemedicine"
+      ],
+      "true_positives": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "precision_arithmetic": "1 / 1 = 1.0",
+      "recall_arithmetic": "1 / 1 = 1.0"
+    },
+    {
+      "query": "What is the cardiology consultation fee and can a first cardiology visit be done by video?",
+      "strategy": "fixed_size_overlap",
+      "expected_doc_ids": [
+        "consultation-fees",
+        "telemedicine"
+      ],
+      "retrieved_doc_ids": [
+        "follow-up-discount",
+        "home-visit",
+        "consultation-fees"
+      ],
+      "true_positives": 1,
+      "precision": 0.3333333333333333,
+      "recall": 0.5,
+      "precision_arithmetic": "1 / 3 = 0.3333333333333333",
+      "recall_arithmetic": "1 / 2 = 0.5"
+    },
+    {
+      "query": "What is the cardiology consultation fee and can a first cardiology visit be done by video?",
+      "strategy": "sentence",
+      "expected_doc_ids": [
+        "consultation-fees",
+        "telemedicine"
+      ],
+      "retrieved_doc_ids": [
+        "follow-up-discount",
+        "telemedicine"
+      ],
+      "true_positives": 1,
+      "precision": 0.5,
+      "recall": 0.5,
+      "precision_arithmetic": "1 / 2 = 0.5",
+      "recall_arithmetic": "1 / 2 = 0.5"
+    }
+  ]
+}
