@@ -1,6 +1,6 @@
 # Project progress
 
-Phases 0 through 12 are closed. The public GitHub repository was not created: the GitHub CLI is not logged in, and this repository has no commits and no remote.
+Phases 0 through 12 are complete. Public repository: https://github.com/yousufamir88/healthcare
 
 ## Checklist
 
@@ -16,7 +16,7 @@ Phases 0 through 12 are closed. The public GitHub repository was not created: th
 - [x] Phase 9 — Structured logging and evaluation (approved)
 - [x] Phase 10 — AutoGen review stage (approved)
 - [x] Phase 11 — AI governance, budget, and cache (approved)
-- [x] Phase 12 — Integration and testing (closed 2026-10-19; 109 tests passed). GitHub submission was not done.
+- [x] Phase 12 — Integration, testing, and GitHub submission (approved). 109 tests passed. Public repo: https://github.com/yousufamir88/healthcare
 
 ## Phase 0 notes
 
@@ -85,6 +85,7 @@ Phases 0 through 12 are closed. The public GitHub repository was not created: th
 | 2026-10-18 | This session, offline: `.venv/bin/python -m pytest tests/test_governance.py tests/test_guardrails.py tests/test_evaluation.py -q -m "not integration"` | 20 passed, 1 deselected in 2.32s. |
 | 2026-10-18 | This session, offline: `.venv/bin/python -m app.governance.controls` | Exit 0. Same budget and risk figures. Cache entries: 1. Log outcomes: `answered`, `cache_hit`, `rejected_budget`, `rejected_injection`. Phase 11 approved. |
 | 2026-10-18 | This session, offline: `.venv/bin/python -m pytest -q` | 109 passed in 9.87s. |
+| 2026-10-26 | User: first commit `c02bd68`, remote `origin` set to `https://github.com/yousufamir88/healthcare.git`, branch `main` up to date. | Public repo confirmed: visibility PUBLIC, default branch `main`. Phase 12 GitHub submission complete. |
 
 The Phase 1 file hash of the generated records matches the earlier generator: `6226914ad06138130f05acc646bbcdf74feabdce9f00f1c6297d3c3e981e41b2`. The generation path was kept. Validation and reporting were added around it.
 
@@ -97,3 +98,4 @@ The Phase 1 file hash of the generated records matches the earlier generator: `6
 - Phase 9 scores are a local phrase rubric. They are not a human rating and not a model judge. A perfect score means every expected phrase and source check passed on this run.
 - AutoGen 0.7 rejects hyphens in agent names. The review roles are Policy-Compliance-Reviewer and Final-Editor. The agent names passed to AutoGen are `Policy_Compliance_Reviewer` and `Final_Editor`.
 - Running `python -m app.governance.controls` loads that file twice. The cache `ask()` uses is `app.governance.controls`. The demo prints that cache. An earlier print read the empty copy and showed 0 entries while the log already said `cache_hit`.
+- GitHub submission uses account `yousufamir88`. The remote is `origin` → `https://github.com/yousufamir88/healthcare.git`.

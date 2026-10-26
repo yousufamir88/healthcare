@@ -408,7 +408,7 @@ HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 python -m pytest -q
 
 On 2026-10-18 that command passed 109 tests in 9.87s. LangChain and CrewAI printed their usual deprecation warnings. The governance transcript from the corrected run is `evaluation/governance_demo.txt`.
 
-The public GitHub repository is the remaining Phase 12 step. `gh` is installed and is not logged in, so the repository has not been created.
+Public repository: https://github.com/yousufamir88/healthcare
 
 ## Layout
 
