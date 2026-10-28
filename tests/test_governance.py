@@ -6,6 +6,7 @@ from app.governance.controls import (
     REQUEST_COST_BUDGET_INR,
     REQUEST_TOKEN_BUDGET,
     RETRIEVAL_ROLE,
+    SYSTEM_RISK_LEVEL,
     _CACHE,
     assess_budget,
     cache_size,
@@ -17,6 +18,7 @@ from app.governance.controls import (
     recall,
     remember,
     reset_cache,
+    system_risk_report,
 )
 from app.guardrails.checks import (
     INJECTION_ANSWER,
@@ -42,6 +44,14 @@ def test_only_the_lookup_agent_can_read_appointments():
     assert tools[LOOKUP_ROLE] == ["check_appointment_status"]
     assert tools[COMPOSER_ROLE] == []
     assert "check_appointment_status" not in tools[RETRIEVAL_ROLE]
+
+
+def test_system_risk_is_high_with_a_written_justification():
+    report = system_risk_report()
+
+    assert report["level"] == SYSTEM_RISK_LEVEL == "High"
+    assert "medical" in report["justification"].casefold()
+    assert len(report["justification"].split()) >= 40
 
 
 def test_risk_labels_cover_policy_lookup_and_unsafe_requests():

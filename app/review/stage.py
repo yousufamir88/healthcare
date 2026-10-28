@@ -12,6 +12,7 @@ from collections.abc import AsyncGenerator, Mapping, Sequence
 from typing import Any
 
 from autogen_agentchat.agents import AssistantAgent
+from autogen_agentchat.messages import StructuredMessage
 from autogen_agentchat.teams import RoundRobinGroupChat
 from autogen_core.models import (
     ChatCompletionClient,
@@ -73,7 +74,7 @@ class MockReviewClient(ChatCompletionClient):
         extra_create_args: Mapping[str, Any] = {},
         cancellation_token: Any = None,
     ) -> CreateResult:
-        reply = _reply_for(messages)
+        reply = _reply_for(messages, json_output=json_output)
         usage = RequestUsage(
             prompt_tokens=max(1, len(_conversation(messages)) // 4),
             completion_tokens=max(1, len(reply) // 4),
@@ -155,7 +156,7 @@ class MockReviewClient(ChatCompletionClient):
             "function_calling": False,
             "json_output": True,
             "family": ModelFamily.UNKNOWN,
-            "structured_output": False,
+            "structured_output": True,
         }
 
 
@@ -236,10 +237,12 @@ async def _run_team(draft: str, evidence: str) -> tuple[ReviewVerdict, list[str]
             "If it is not approved, set final_answer to the verified fallback. "
             "Reply with the verdict JSON."
         ),
+        output_content_type=ReviewVerdict,
     )
     team = RoundRobinGroupChat(
         [reviewer, editor],
         max_turns=MAX_TURNS,
+        custom_message_types=[StructuredMessage[ReviewVerdict]],
     )
     result = await team.run(
         task=(
@@ -258,18 +261,33 @@ async def _run_team(draft: str, evidence: str) -> tuple[ReviewVerdict, list[str]
             f"Speakers: {speakers}."
         )
     editor_message = result.messages[-1]
-    content = getattr(editor_message, "content", "")
-    if not isinstance(content, str):
-        raise RuntimeError("The Final-Editor did not return text.")
-    verdict = ReviewVerdict.model_validate_json(content)
+    content = getattr(editor_message, "content", None)
+    if isinstance(content, ReviewVerdict):
+        verdict = content
+    elif isinstance(content, str):
+        verdict = ReviewVerdict.model_validate_json(content)
+    else:
+        raise RuntimeError(
+            "The Final-Editor did not return a ReviewVerdict structured message."
+        )
     return verdict, speakers
 
 
-def _reply_for(messages: Sequence[LLMMessage]) -> str:
+def _reply_for(
+    messages: Sequence[LLMMessage],
+    *,
+    json_output: bool | type[BaseModel] | None = None,
+) -> str:
     text = _conversation(messages)
     draft = _section(text, DRAFT_MARKER, EVIDENCE_MARKER)
     evidence = _section(text, EVIDENCE_MARKER, None)
     verdict = verdict_for(draft, evidence)
+    if json_output is ReviewVerdict or (
+        isinstance(json_output, type)
+        and issubclass(json_output, BaseModel)
+        and json_output is ReviewVerdict
+    ):
+        return verdict.model_dump_json()
     if EDITOR_NAME in text:
         return verdict.model_dump_json()
     return f"approved={str(verdict.approved).lower()}\nreason={verdict.reason}"
@@ -325,6 +343,8 @@ def main() -> int:
         "Mode: MOCK_LLM",
         "Team: RoundRobinGroupChat",
         f"max_turns: {MAX_TURNS}",
+        "Final-Editor output_content_type: ReviewVerdict",
+        "Team custom_message_types: StructuredMessage[ReviewVerdict]",
         f"Roles: {REVIEWER_ROLE}, {EDITOR_ROLE}",
         f"Agent names: {REVIEWER_NAME}, {EDITOR_NAME}",
         "",

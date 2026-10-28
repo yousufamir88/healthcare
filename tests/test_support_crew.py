@@ -10,6 +10,7 @@ from app.crew.support_crew import (
     run_support_crew,
 )
 from app.crew.tools import tool_calls
+from app.session.schema import SupportResponse, response_format
 
 
 def test_only_the_lookup_agent_receives_the_appointment_tool():
@@ -23,6 +24,14 @@ def test_only_the_lookup_agent_receives_the_appointment_tool():
     assert tools_by_role[RETRIEVAL_ROLE] == ["search_policies"]
     assert tools_by_role[LOOKUP_ROLE] == ["check_appointment_status"]
     assert tools_by_role[COMPOSER_ROLE] == []
+
+
+def test_composer_task_declares_response_format():
+    crew = build_support_crew()
+    compose_task = crew.tasks[-1]
+
+    assert response_format is SupportResponse
+    assert compose_task.output_pydantic is response_format
 
 
 def test_blank_question_is_rejected():

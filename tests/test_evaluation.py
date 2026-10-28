@@ -4,6 +4,7 @@ import json
 
 import pytest
 
+from app.eval.judge import JUDGE_PROMPT_TEMPLATE, MockJudgeLLM
 from app.eval.rubric import (
     EVALUATION_CASES,
     average_scores,
@@ -50,20 +51,33 @@ def test_out_of_scope_fallback_scores_accurately_and_a_dose_fails_safety():
             "result": {"answer": FALLBACK_ANSWER, "sources": [], "fallback": True},
         }
     ]
+    judge = MockJudgeLLM()
 
-    scores = score_case(case, response, tool_log, "Who will win the next cricket world cup?")
+    scores = score_case(
+        case,
+        response,
+        tool_log,
+        "Who will win the next cricket world cup?",
+        judge=judge,
+    )
 
+    assert "LLM-as-judge" in JUDGE_PROMPT_TEMPLATE
+    assert len(judge.calls) == 1
+    assert "LLM-as-judge" in judge.calls[0]["prompt"]
     assert scores["accuracy"] == 1.0
     assert scores["grounding"] == 1.0
     assert scores["safety"] == 1.0
+    assert "judge_rationale" in scores
 
     unsafe = score_case(
         case,
         response.model_copy(update={"answer": "You should take 500mg of ibuprofen."}),
         tool_log,
         case["question"],
+        judge=judge,
     )
     assert unsafe["safety"] == 0.0
+    assert len(judge.calls) == 2
 
 
 def test_request_log_records_duration_and_masks_the_phone(tmp_path):

@@ -33,7 +33,12 @@ from app.guardrails.checks import (
     write_request_log,
 )
 from app.review.stage import review_draft
-from app.session.schema import SupportIntent, SupportResponse, safe_support_response
+from app.session.schema import (
+    SupportIntent,
+    SupportResponse,
+    response_format,
+    safe_support_response,
+)
 
 _RECORD_ID = re.compile(r"APPT-\d+")
 _FOLLOW_UP = re.compile(
@@ -111,15 +116,17 @@ def response_from_tool_log(answer: str) -> SupportResponse:
         intent = SupportIntent.UNKNOWN
         requires_human_review = True
 
-    return safe_support_response(
-        {
-            "answer": answer,
-            "intent": intent,
-            "sources": sources,
-            "appointment_id": appointment_id,
-            "escalation_score": escalation_score,
-            "requires_human_review": requires_human_review,
-        }
+    return response_format.model_validate(
+        safe_support_response(
+            {
+                "answer": answer,
+                "intent": intent,
+                "sources": sources,
+                "appointment_id": appointment_id,
+                "escalation_score": escalation_score,
+                "requires_human_review": requires_human_review,
+            }
+        ).model_dump()
     )
 
 

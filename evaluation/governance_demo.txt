@@ -9,8 +9,13 @@ Least autonomy
 Retrieval Agent: ['search_policies']
 Lookup Agent: ['check_appointment_status']
 Response Composer: []
+Guard: only the Lookup Agent is wired to check_appointment_status; Retrieval and Composer never receive that tool, so they cannot call it.
 
-Risk labels
+System risk (Application layer)
+Level: High
+Justification: This system is High risk under the brief's Low/Medium/High scheme. Low covers summarization or transcription; Medium covers code generation or ordinary customer-support tickets; High covers medical data, hiring decisions, or financial data. The agent answers clinic policy questions and looks up appointment records that include specialty, status, fee, and follow-up flags—healthcare operational data—so the whole product sits in the High band even though every demo record is synthetic. That is why least-autonomy limits lookup to one agent, guardrails mask phones and block injection, AutoGen reviews drafts, and a runtime budget rejects oversized requests before the crew runs.
+
+Per-request risk labels
 Policy question: low
 Appointment question: medium
 Injection question: high

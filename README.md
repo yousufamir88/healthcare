@@ -81,9 +81,10 @@ On 2026-10-16, `pytest tests/test_config.py tests/test_dataset.py -q` reported `
 
 ## Synthetic appointment dataset
 
-`app/data/dataset.py` builds fictional appointments. There are no real patients. Running the module validates the records and prints the measured counts:
+`dataset.py` at the repository root (and `app/data/dataset.py`) builds fictional appointments. There are no real patients. Running either module validates the records and prints the measured counts:
 
 ```bash
+python dataset.py
 python -m app.data.dataset
 ```
 
@@ -257,7 +258,7 @@ Phase 6 stores each conversation in its own LangChain `InMemoryChatMessageHistor
 
 A follow-up such as "that appointment" reuses the latest `APPT-` id from the same session. A new session id starts with an empty history, so the same follow-up does not receive the earlier id.
 
-Every reply is a `SupportResponse`:
+Every crew reply must match `response_format` (`SupportResponse`). The Response Composer task sets `output_pydantic=response_format`, and `run_support_crew()` validates the kickoff result against that schema in code.
 
 | Field | Type | Default | Meaning |
 | --- | --- | --- | --- |
@@ -337,7 +338,7 @@ On 2026-10-18 a live server check returned `status: ready`, `mock_llm: true`, an
 
 ## Evaluation
 
-Phase 9 writes one JSONL line per request and scores 15 fixed questions with a local rubric. The rubric is ordinary Python. It does not ask a model to grade the answers.
+Phase 9 writes one JSONL line per request and scores 15 fixed questions with an **LLM-as-judge prompt** answered by `MockJudgeLLM` under `MOCK_LLM` (no API key). The judge prompt is in `app/eval/judge.py` (`JUDGE_PROMPT_TEMPLATE`). The stand-in model returns Accuracy, Grounding, Completeness, and Safety as structured JSON for every query.
 
 Each log line has `trace_id`, `timestamp`, `session_id`, the masked `question`, `outcome`, and `duration_ms`. A line that still contains a fixed-format phone number is refused.
 
@@ -362,7 +363,7 @@ Phase 10 sends the guarded draft through an AutoGen `RoundRobinGroupChat` with `
 
 AutoGen 0.7 requires each agent name to be a Python identifier. The roles are Policy-Compliance-Reviewer and Final-Editor. The names passed to AutoGen are `Policy_Compliance_Reviewer` and `Final_Editor`.
 
-The editor returns a Pydantic verdict with `approved`, `final_answer`, and `reason`. An approved draft is copied unchanged. A draft with a dose, a phone number, or a sentence missing from the evidence is replaced with the retrieval fallback.
+The Final-Editor is constructed with `output_content_type=ReviewVerdict`. The team is constructed with `custom_message_types=[StructuredMessage[ReviewVerdict]]` so the structured verdict is registered. The verdict fields are `approved`, `final_answer`, and `reason`. An approved draft is copied unchanged. A draft with a dose, a phone number, or a sentence missing from the evidence is replaced with the retrieval fallback.
 
 ```bash
 python -m app.review.stage
@@ -382,8 +383,8 @@ Phase 11 keeps appointment lookup on one agent, labels each request, rejects an 
 
 | Control | Rule |
 | --- | --- |
-| Least autonomy | Retrieval Agent: `search_policies`. Lookup Agent: `check_appointment_status`. Response Composer: no tools. |
-| Risk | Policy question: `low`. A question with `APPT-` id: `medium`. Injection, a dose, or human review: `high`. |
+| Least autonomy | Retrieval Agent: `search_policies`. Lookup Agent: `check_appointment_status`. Response Composer: no tools. Only the Lookup Agent is wired to the appointment tool. |
+| System risk | **High.** The product answers clinic-policy questions and looks up appointment records (specialty, status, fee, follow-up). Under the brief’s scheme that is medical/healthcare operational data, so the system is High even though every demo record is synthetic. Per-request labels still mark policy as `low`, appointment as `medium`, and injection/dose/review as `high`. |
 | Budget | 256 tokens. 0.20 INR per 1,000 tokens. Cost ceiling 0.0512 INR. One token is four characters, rounded up. |
 | Cache | Key is the lowercased question with repeated spaces collapsed. A hit skips the crew. Injection is checked first. A cached dose or phone number is dropped. |
 
@@ -417,6 +418,7 @@ healthcare/
 ├── .env.example
 ├── .gitignore
 ├── .python-version          # 3.12
+├── dataset.py               # Part 1 root entry (delegates to app.data.dataset)
 ├── README.md
 ├── PROGRESS.md
 ├── pyproject.toml
@@ -434,16 +436,17 @@ healthcare/
 │   ├── tools/appointment_tools.py  # Phase 4 lookup and escalation
 │   ├── crew/
 │   │   ├── tools.py           # Phase 5 retrieval and lookup tools
-│   │   └── support_crew.py    # Phase 5 three-agent crew
+│   │   └── support_crew.py    # Phase 5 three-agent crew + response_format
 │   ├── session/
-│   │   ├── schema.py          # Phase 6 response model
+│   │   ├── schema.py          # Phase 6 SupportResponse / response_format
 │   │   └── memory.py          # Phase 6 session history
 │   ├── guardrails/checks.py   # Phase 7 masking, injection, grounding
 │   ├── api/
 │   │   ├── documents.py       # Phase 8 policy upload and indexing
 │   │   └── server.py          # Phase 8 HTTP and WebSocket routes
 │   ├── eval/
-│   │   ├── rubric.py          # Phase 9 fixed questions and scores
+│   │   ├── judge.py           # Phase 9 MOCK_LLM LLM-as-judge
+│   │   ├── rubric.py          # Phase 9 fixed questions
 │   │   └── harness.py         # Phase 9 log run and report writer
 │   ├── review/stage.py        # Phase 10 AutoGen review team
 │   └── governance/controls.py # Phase 11 risk, budget, and cache

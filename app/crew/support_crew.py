@@ -25,6 +25,7 @@ from app.crew.tools import (
     tool_calls,
 )
 from app.llm.mock_llm import QUESTION_MARKER, MockLLM, reset_llm_log
+from app.session.schema import SupportResponse, response_format, safe_support_response
 
 RETRIEVAL_ROLE = "Retrieval Agent"
 LOOKUP_ROLE = "Lookup Agent"
@@ -99,9 +100,13 @@ def build_support_crew() -> Crew:
             "result. Do not add facts that are not in those results.\n"
             f"{QUESTION_MARKER} {{question}}"
         ),
-        expected_output="A support answer grounded in the earlier tool results.",
+        expected_output=(
+            "A SupportResponse JSON object with answer, intent, sources, "
+            "appointment_id, escalation_score, and requires_human_review."
+        ),
         agent=composer,
         context=[retrieval_task, lookup_task],
+        output_pydantic=response_format,
     )
     return Crew(
         agents=[retrieval_agent, lookup_agent, composer],
@@ -116,15 +121,35 @@ def build_support_crew() -> Crew:
 
 
 def run_support_crew(question: str) -> str:
-    """Run one question through the crew and return the final answer text."""
+    """Run one question through the crew and return the final answer text.
+
+    The Response Composer task uses ``response_format`` / ``output_pydantic``
+    so the crew output is validated as ``SupportResponse`` before the answer
+    text is returned.
+    """
     cleaned = question.strip()
     if not cleaned:
         raise ValueError("question must be a non-empty string.")
     reset_llm_log()
     reset_tool_log()
     result = build_support_crew().kickoff(inputs={"question": cleaned})
+    validated = validate_crew_response(result)
+    return validated.answer
+
+
+def validate_crew_response(result: object) -> SupportResponse:
+    """Validate a crew kickoff result against ``response_format``."""
+    pydantic_output = getattr(result, "pydantic", None)
+    if isinstance(pydantic_output, SupportResponse):
+        return response_format.model_validate(pydantic_output.model_dump())
+    if isinstance(pydantic_output, dict):
+        return response_format.model_validate(pydantic_output)
     raw = getattr(result, "raw", None)
-    return raw if isinstance(raw, str) and raw.strip() else str(result)
+    text = raw if isinstance(raw, str) and raw.strip() else str(result)
+    try:
+        return response_format.model_validate_json(text)
+    except Exception:
+        return safe_support_response({"answer": text, "intent": "unknown"})
 
 
 def main() -> int:

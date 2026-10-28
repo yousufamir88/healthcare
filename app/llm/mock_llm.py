@@ -14,6 +14,7 @@ from typing import Any
 from crewai.llms.base_llm import BaseLLM
 
 from app.rag.retrieval import FALLBACK_ANSWER
+from app.session.schema import SupportIntent, SupportResponse, response_format
 
 QUESTION_MARKER = "SUPPORT_QUESTION:"
 _QUESTION = re.compile(r"SUPPORT_QUESTION:\s*(.+)")
@@ -60,7 +61,7 @@ class MockLLM(BaseLLM):
         response_model: type | None = None,
     ) -> str | list[dict[str, Any]]:
         """Return a tool call or a final answer built from tool evidence."""
-        del callbacks, available_functions, from_task, from_agent, response_model
+        del callbacks, available_functions, from_task, from_agent
         text = _message_text(messages)
         tool_output = _latest_tool_output(messages)
         if tool_output is not None:
@@ -85,27 +86,75 @@ class MockLLM(BaseLLM):
             _record("final", skipped)
             return skipped
 
-        answer = compose_from_evidence(text)
-        _record("final", answer)
-        return answer
+        structured = compose_support_response(text)
+        rendered = structured.model_dump_json()
+        _record("final", rendered)
+        if response_model is response_format or response_model is SupportResponse:
+            return rendered
+        return rendered
 
 
 def compose_from_evidence(text: str) -> str:
     """Build the composer answer from tool JSON already present in the prompt."""
+    return compose_support_response(text).answer
+
+
+def compose_support_response(text: str) -> SupportResponse:
+    """Build a ``response_format`` / ``SupportResponse`` object from tool evidence."""
     payloads = _extract_payloads(text)
     parts: list[str] = []
+    sources: list[str] = []
+    appointment_id: str | None = None
+    escalation_score: float | None = None
+    requires_human_review = False
+    saw_policy = False
+    saw_appointment = False
     seen: set[str] = set()
     for payload in payloads:
         key = json.dumps(payload, sort_keys=True)
         if key in seen:
             continue
         seen.add(key)
+        tool_name = payload.get("tool")
+        if tool_name == "search_policies":
+            saw_policy = True
+            for source in payload.get("sources") or []:
+                if source not in sources:
+                    sources.append(str(source))
+            if payload.get("fallback") is True:
+                requires_human_review = True
+        elif tool_name == "check_appointment_status":
+            saw_appointment = True
+            if payload.get("found") is True:
+                appointment_id = str(payload.get("record_id"))
+                escalation_score = float(payload["escalation_score"])
+                if payload.get("requires_escalation") is True:
+                    requires_human_review = True
+            else:
+                requires_human_review = True
         rendered = _render_payload(payload)
         if rendered:
             parts.append(rendered)
-    if not parts:
-        return FALLBACK_ANSWER
-    return " ".join(parts)
+    if saw_policy and saw_appointment:
+        intent = SupportIntent.MIXED
+    elif saw_appointment:
+        intent = SupportIntent.APPOINTMENT
+    elif saw_policy:
+        intent = SupportIntent.POLICY
+    else:
+        intent = SupportIntent.UNKNOWN
+        requires_human_review = True
+    answer = " ".join(parts) if parts else FALLBACK_ANSWER
+    return response_format.model_validate(
+        {
+            "answer": answer,
+            "intent": intent,
+            "sources": sources,
+            "appointment_id": appointment_id,
+            "escalation_score": escalation_score,
+            "requires_human_review": requires_human_review,
+        }
+    )
 
 
 def _tool_call_from_schema(

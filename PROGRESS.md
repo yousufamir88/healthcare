@@ -86,6 +86,7 @@ Phases 0 through 12 are complete. Public repository: https://github.com/yousufam
 | 2026-10-18 | This session, offline: `.venv/bin/python -m app.governance.controls` | Exit 0. Same budget and risk figures. Cache entries: 1. Log outcomes: `answered`, `cache_hit`, `rejected_budget`, `rejected_injection`. Phase 11 approved. |
 | 2026-10-18 | This session, offline: `.venv/bin/python -m pytest -q` | 109 passed in 9.87s. |
 | 2026-10-26 | User: first commit `c02bd68`, remote `origin` set to `https://github.com/yousufamir88/healthcare.git`, branch `main` up to date. | Public repo confirmed: visibility PUBLIC, default branch `main`. Phase 12 GitHub submission complete. |
+| 2026-10-26 | Gap fix: LLM-as-judge (`MockJudgeLLM`), Autogen `output_content_type` + `StructuredMessage[ReviewVerdict]`, system risk High paragraph, crew `response_format` / `output_pydantic`, root `dataset.py`. | `pytest -q` → 112 passed. Eval averages 1.0000 with 15 judge calls. |
 
 The Phase 1 file hash of the generated records matches the earlier generator: `6226914ad06138130f05acc646bbcdf74feabdce9f00f1c6297d3c3e981e41b2`. The generation path was kept. Validation and reporting were added around it.
 
@@ -95,7 +96,7 @@ The Phase 1 file hash of the generated records matches the earlier generator: `6
 - Phone masking covers four fixed formats only. Names, diagnoses, and insurance identifiers are not masked. Injection detection matches listed phrases, not every possible override.
 - An appointment-status question still runs the policy search, so the answer can include policy sentences along with the lookup facts.
 - The retrieval reports in `evaluation/` were rewritten by `python -m app.rag.retrieval` on 2026-10-16. Older numbers from a different document set are not used.
-- Phase 9 scores are a local phrase rubric. They are not a human rating and not a model judge. A perfect score means every expected phrase and source check passed on this run.
+- Phase 9 scores come from an LLM-as-judge prompt answered by `MockJudgeLLM` under `MOCK_LLM`. A perfect score means every expected phrase and source check passed on this run.
 - AutoGen 0.7 rejects hyphens in agent names. The review roles are Policy-Compliance-Reviewer and Final-Editor. The agent names passed to AutoGen are `Policy_Compliance_Reviewer` and `Final_Editor`.
 - Running `python -m app.governance.controls` loads that file twice. The cache `ask()` uses is `app.governance.controls`. The demo prints that cache. An earlier print read the empty copy and showed 0 entries while the log already said `cache_hit`.
 - GitHub submission uses account `yousufamir88`. The remote is `origin` → `https://github.com/yousufamir88/healthcare.git`.

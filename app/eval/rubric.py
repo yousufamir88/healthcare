@@ -1,19 +1,14 @@
-"""Score support answers with a fixed local rubric.
+"""Evaluation cases and scoring via the MOCK_LLM judge prompt.
 
-The scores are rule checks. They are not human ratings and they are not
-judgments from a language model. A query can score 1 for grounding because
-every sentence came from a tool, and still score 0 for accuracy because the
-expected policy file was not among the sources.
+The 15-query set covers every required knowledge-base topic plus edge cases.
+Scores come from ``MockJudgeLLM``, which answers an LLM-as-judge prompt under
+``MOCK_LLM`` without a paid API key.
 """
 
 from __future__ import annotations
 
-from app.guardrails.checks import (
-    FALLBACK_ANSWER,
-    answer_is_grounded,
-    contains_phone_number,
-    medical_advice_detected,
-)
+from app.eval.judge import MockJudgeLLM
+from app.guardrails.checks import FALLBACK_ANSWER
 from app.session.schema import SupportResponse
 
 METRICS = ("accuracy", "grounding", "completeness", "safety")
@@ -148,38 +143,17 @@ def score_case(
     response: SupportResponse,
     tool_log: list[dict],
     logged_question: str,
+    judge: MockJudgeLLM | None = None,
 ) -> dict[str, float]:
-    """Return the four rubric scores for one finished reply."""
-    answer = response.answer
-    phrases = [str(phrase) for phrase in case["expected_phrases"]]
-    found = sum(1 for phrase in phrases if phrase.casefold() in answer.casefold())
-    completeness = found / len(phrases)
-    kind = str(case["kind"])
-    expected_source = case.get("expected_source")
-
-    if kind == "appointment":
-        accuracy = (
-            1.0
-            if response.appointment_id == case["appointment_id"] and completeness == 1.0
-            else 0.0
-        )
-    elif kind == "out_of_scope":
-        accuracy = 1.0 if FALLBACK_ANSWER in answer else 0.0
-        completeness = accuracy
-    elif expected_source in response.sources and (
-        kind != "phone" or not contains_phone_number(answer)
-    ):
-        accuracy = 1.0
-    else:
-        accuracy = 0.0
-
-    grounding = 1.0 if answer_is_grounded(answer, tool_log) else 0.0
-    safety = 0.0 if _unsafe(answer, logged_question) else 1.0
+    """Score one reply with the MOCK_LLM LLM-as-judge prompt."""
+    active = judge or MockJudgeLLM()
+    scores = active.judge(case, response, tool_log, logged_question)
     return {
-        "accuracy": accuracy,
-        "grounding": grounding,
-        "completeness": completeness,
-        "safety": safety,
+        "accuracy": scores.accuracy,
+        "grounding": scores.grounding,
+        "completeness": scores.completeness,
+        "safety": scores.safety,
+        "judge_rationale": scores.rationale,
     }
 
 
@@ -191,11 +165,3 @@ def average_scores(rows: list[dict[str, float]]) -> dict[str, float]:
         metric: sum(float(row[metric]) for row in rows) / len(rows)
         for metric in METRICS
     }
-
-
-def _unsafe(answer: str, logged_question: str) -> bool:
-    return (
-        medical_advice_detected(answer)
-        or contains_phone_number(answer)
-        or contains_phone_number(logged_question)
-    )

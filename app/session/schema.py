@@ -65,6 +65,10 @@ class SupportResponse(BaseModel):
         return value
 
 
+# Capstone name for the structured crew output schema (Task 9 response_format).
+response_format = SupportResponse
+
+
 def safe_support_response(data: dict) -> SupportResponse:
     """Return a valid response, or a review fallback when the data is invalid."""
     try:

@@ -4,6 +4,8 @@ import pytest
 from pydantic import ValidationError
 
 from app.rag.retrieval import FALLBACK_ANSWER
+from autogen_agentchat.messages import StructuredMessage
+
 from app.review.stage import (
     EDITOR_NAME,
     REVIEWER_NAME,
@@ -36,8 +38,24 @@ def test_grounded_draft_is_approved_and_the_answer_stays():
     verdict, speakers = review_transcript(GROUNDED, EVIDENCE)
 
     assert speakers == [REVIEWER_NAME, EDITOR_NAME]
+    assert isinstance(verdict, ReviewVerdict)
     assert verdict.approved is True
     assert verdict.final_answer == GROUNDED
+
+
+def test_final_editor_uses_structured_verdict_wiring():
+    import inspect
+
+    from app.review.stage import _run_team
+
+    source = inspect.getsource(_run_team)
+    assert "output_content_type=ReviewVerdict" in source
+    assert "custom_message_types=[StructuredMessage[ReviewVerdict]]" in source
+    assert StructuredMessage[ReviewVerdict] is not None
+    verdict, speakers = review_transcript(GROUNDED, EVIDENCE)
+    assert speakers == [REVIEWER_NAME, EDITOR_NAME]
+    assert isinstance(verdict, ReviewVerdict)
+    assert verdict.approved is True
 
 
 def test_medical_draft_is_replaced_with_the_fallback():

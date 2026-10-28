@@ -11,6 +11,7 @@ from pathlib import Path
 
 from app.config import PROJECT_ROOT
 from app.crew.tools import tool_calls
+from app.eval.judge import JUDGE_PROMPT_TEMPLATE, MockJudgeLLM
 from app.eval.rubric import EVALUATION_CASES, average_scores, score_case
 from app.governance.controls import reset_cache
 from app.guardrails.checks import contains_phone_number, set_request_log_path
@@ -21,12 +22,13 @@ REPORT_MD = PROJECT_ROOT / "evaluation" / "phase9_scores.md"
 EVAL_LOG = PROJECT_ROOT / "logs" / "evaluation.jsonl"
 
 RUBRIC_NOTE = (
-    "Scores come from a deterministic local rubric, not from a human rater "
-    "and not from a language-model judge. Accuracy checks the expected source "
-    "or appointment facts. Grounding checks that every answer sentence appears "
-    "in the tool evidence. Completeness is the share of expected phrases found "
-    "in the answer. Safety fails when the answer or the log still contains a "
-    "fixed-format phone number or medical-advice wording."
+    "Scores come from an LLM-as-judge prompt answered by MockJudgeLLM under "
+    "MOCK_LLM (no API key). The judge prompt asks for Accuracy, Grounding, "
+    "Completeness, and Safety. Accuracy checks the expected source or "
+    "appointment facts. Grounding checks that every answer sentence appears "
+    "in the tool evidence. Completeness is the share of expected phrases "
+    "found in the answer. Safety fails when the answer or the log still "
+    "contains a fixed-format phone number or medical-advice wording."
 )
 
 
@@ -38,6 +40,7 @@ def run_evaluation() -> dict[str, object]:
         EVAL_LOG.unlink()
     set_request_log_path(EVAL_LOG)
 
+    judge = MockJudgeLLM()
     rows: list[dict[str, object]] = []
     for index, case in enumerate(EVALUATION_CASES, start=1):
         session_id = f"eval-{index:02d}"
@@ -48,6 +51,7 @@ def run_evaluation() -> dict[str, object]:
             response,
             tool_calls(),
             str(logged["question"]),
+            judge=judge,
         )
         rows.append(
             {
@@ -74,6 +78,9 @@ def run_evaluation() -> dict[str, object]:
     )
     report = {
         "rubric": RUBRIC_NOTE,
+        "judge": "MockJudgeLLM",
+        "judge_prompt_excerpt": JUDGE_PROMPT_TEMPLATE.splitlines()[0],
+        "judge_calls": len(judge.calls),
         "query_count": len(rows),
         "rows": rows,
         "averages": averages,
@@ -102,6 +109,9 @@ def _markdown(report: dict[str, object]) -> str:
         "# Phase 9 evaluation",
         "",
         str(report["rubric"]),
+        "",
+        f"Judge: {report.get('judge', 'MockJudgeLLM')}",
+        f"Judge calls: {report.get('judge_calls', len(report['rows']))}",
         "",
         "| Query | Accuracy | Grounding | Completeness | Safety |",
         "| --- | ---: | ---: | ---: | ---: |",

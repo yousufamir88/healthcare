@@ -1,5 +1,7 @@
 """Tests for schema-based tool dispatch in the local mock model."""
 
+import json
+
 from app.llm.mock_llm import MockLLM, reset_llm_log
 from app.rag.retrieval import FALLBACK_ANSWER
 
@@ -78,7 +80,9 @@ def test_prompt_mention_of_a_tool_name_does_not_dispatch_without_a_matching_sche
     answer = llm.call(messages, tools=tools)
 
     assert isinstance(answer, str)
-    assert answer == FALLBACK_ANSWER
+    payload = json.loads(answer)
+    assert payload["answer"] == FALLBACK_ANSWER
+    assert payload["intent"] == "unknown"
 
 
 def test_query_argument_receives_the_support_question():
